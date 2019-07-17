@@ -3,12 +3,16 @@
 函数的返回值都是promise对象
 */
 import ajax from './ajax'
-
+import jsonp from 'jsonp'
+import { message } from 'antd';
 // const BASE = 'http://localhost:5000'
 const BASE = ''
 
 // 请求登陆
-export const reqLogin = (username, password) =>  ajax.post(BASE + '/login', {username, password})
+export const reqLogin = (username, password) => ajax.post(BASE + '/login', {
+  username,
+  password
+})
 
 /* ajax({
     method: 'post',
@@ -29,3 +33,20 @@ reqLogin(name, pwd).then(result => { // response.data的值
 })
  */
 // 将实参数据赋值形参变量
+
+
+//发送jsonp请求得到天气信息
+export const repweather = (city) => {
+  //返回的必须是一个promise对象
+  return new Promise((resolve, reject) => { //执行器函数:内部去执行异步任务
+    const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
+    jsonp(url, {}, (err, data) => {
+      if(!err&&data.error===0){
+        const {dayPictureUrl,weather}=data.results[0].weather_data[0]
+        resolve({dayPictureUrl,weather})
+      }else{
+        message.error('获取天气信息失败')
+      }
+    })
+  })
+}

@@ -1,23 +1,31 @@
 import React, { Component } from 'react'
-import { Link, withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { Modal } from 'antd'
 import memoryUtils from '../../utils/memoryUtils'
 import storageUtils from '../../utils/storageUtils'
 import menuList from '../../config/menuConfig'
+import LinkButton from '../LinkButton'
+import { formateDate } from '../../utils/dateUtils'
+import { repweather } from '../../api'
 
 import './header.less'
 class Header extends Component {
+    state = {
+        cuurentTime: formateDate(Date.now()),
+        dayPictureUrl: '',
+        weather: ''
+    }
     getTitle = () => {
         let title = ''
         //根据当前请求的path得到对应的title
         const path = this.props.location.pathname
         menuList.forEach(item => {
-            if(item.key===path){
-                title=item.title
-            }else if(item.children){
-               const cItem= item.children.find(cItem=>cItem.key===path)
-                if(cItem){
-                    title=cItem.title
+            if (item.key === path) {
+                title = item.title
+            } else if (item.children) {
+                const cItem = item.children.find(cItem => cItem.key === path)
+                if (cItem) {
+                    title = cItem.title
                 }
             }
         })
@@ -45,7 +53,28 @@ class Header extends Component {
         })
 
     }
+    getWeather = async () => {
+        //发请求
+        const {dayPictureUrl,weather} = await repweather('北京')
+        //更新状态
+        this.setState({
+            dayPictureUrl,
+            weather
+        })
+    }
+    componentDidMount() {
+        this.timeId = setInterval(() => {
+            //将currentTime更新为最新的值
+            this.setState({ cuurentTime: formateDate(Date.now()) })
+        }, 1000)
+        //送请求jsonp 获取天气信息显示
+        this.getWeather()
+    }
+    componentWillMount() {
+        clearInterval(this.timeId)
+    }
     render() {
+        const { cuurentTime,weather,dayPictureUrl } = this.state
         //得到当前需要显示的title
         const title = this.getTitle()
         const user = memoryUtils.user
@@ -53,14 +82,14 @@ class Header extends Component {
             <div className='header'>
                 <div className='header-top'>
                     欢迎！{user.username} &nbsp;&nbsp;
-                    <Link onClick={this.logout} to='/login'>退出</Link>
+                    <LinkButton onClick={this.logout} to='/login'>退出</LinkButton>
                 </div>
                 <div className='header-bottom'>
                     <div className='header-bottom-left'>{title}</div>
                     <div className='header-bottom-right'>
-                        <span>2019-07-16 20:59</span>
-                        <img src="http://api.map.baidu.com/images/weather/day/duoyun.png" alt="weather" />
-                        <span>晴</span>
+                        <span>{cuurentTime}</span>
+                        <img src={dayPictureUrl} alt="weather" />
+                        <span>{weather}</span>
                     </div>
                 </div>
             </div>
