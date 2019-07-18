@@ -85,7 +85,7 @@ class LeftNav extends Component {
         
         //得到当前请求的路由路径
         const selectKey =this.props.location.pathname
-        console.log(selectKey)
+     
         return (
             <div className='Left-Nav'>
                 <Link className='Left-Nav-Link' to='/'>

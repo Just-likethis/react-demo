@@ -50,3 +50,22 @@ export const repweather = (city) => {
     })
   })
 }
+//获取分类列表
+// export const repCategoyrs=()=>ajax.get('/manage/category/list')
+
+// export const repCategoyrs=()=>ajax({
+//   method: 'get',//默认值
+//   url: 'http://bit.ly/2mTM3nY',
+//   responseType: 'stream'
+// })
+export const repCategoyrs=()=>ajax('/manage/category/list') //返回的是promise对象
+
+//添加分类
+export const repAddCategoyr=(categoryName)=>ajax.post('/manage/category/add',{
+  categoryName
+}) //返回的是promise对象
+//修改分类
+export const repUpdateCategoyr=({categoryName,categoryId})=>ajax.post('/manage/category/update',{
+  categoryName,
+  categoryId
+}) //返回的是promise对象
