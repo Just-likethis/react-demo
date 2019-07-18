@@ -1,47 +1,74 @@
 import React, { Component } from 'react'
+import LinkButton from '../../components/LinkButton'
+import { repProducts } from '../../api'
+
 import { Card, Select, Button, Input, Icon, Table } from 'antd'
 const Option = Select.Option
-const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      render: text => <a href="javascript:;">{text}</a>,
-    },
-    {
-      title: 'Cash Assets',
-      className: 'column-money',
-      dataIndex: 'money',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-    },
-  ];
-  
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      money: '￥300,000.00',
-      address: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      money: '￥1,256,000.00',
-      address: 'London No. 1 Lake Park',
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      money: '￥120,000.00',
-      address: 'Sidney No. 1 Lake Park',
-    },
-  ];
-  
-export default class Product extends Component {
 
+
+export default class Product extends Component {
+    state = {
+        loading: false,
+        products: [],//商品列表
+        total: 0  //商品的总数量
+    }
+    initColumns = () => {
+        this.columns = [
+            {
+                title: '商品名称',
+                dataIndex: 'name'
+            }, {
+                title: '商品描述',
+                dataIndex: 'desc'
+            }, {
+                title: '价格',
+                dataIndex: 'price',
+                render: (price) => '￥' + price
+            }, {
+                title: '状态',
+                width: 80,
+                dataIndex: 'status',
+                render: (status) => {
+                    let btnText = '下架'
+                    let text = '在售'
+                    if (status === 2) {
+                        btnText = '上架'
+                        text = '已下架'
+                    }
+                    return (
+                        <span>
+                            <button>{btnText}</button>
+                            <span>{text}</span>
+                        </span>
+                    )
+                }
+            }, {
+                title: '操作',
+                render: (product) => (
+                    <span>
+                        <LinkButton>详情</LinkButton>
+                        <LinkButton>修改</LinkButton>
+                    </span>
+
+                )
+            }
+        ]
+    }
+    getProducts = async (pageNum, pageSize) => {
+        //发送请求
+        const result = await repProducts(pageNum, 2)
+        if (result.state === 0) {
+            // const { total, list } = result.data
+        }
+    }
+    componentWillMount() {
+        this.initColumns()
+    }
+    componentDidMount() {
+        this.getProducts(1)
+    }
     render() {
+        const { loading, products, total } = this.state
         const title = (
             <span>
                 <Select style={{ width: '200px' }} value='1'>
@@ -63,13 +90,14 @@ export default class Product extends Component {
         return (
             <Card title={title} extra={extra}>
                 <Table
-                    columns={columns}
-                    dataSource={data}
+                    columns={this.columns}
+                    dataSource={products}
                     bordered
-                    loding={loading}
-                    rowKey
-                />,
-            </Card>
+                    rowKey="_id"
+                    loading={loading}
+                    pagination={{ total, defaultPageSize: 2, showQuickJumper: true ,onChange:this.getProducts}}
+                />
+            </Card> 
         )
     }
 }

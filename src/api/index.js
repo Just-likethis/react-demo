@@ -69,3 +69,12 @@ export const repUpdateCategoyr=({categoryName,categoryId})=>ajax.post('/manage/c
   categoryName,
   categoryId
 }) //返回的是promise对象
+
+
+//获取商品分页列表
+export const repProducts=(pageNum,pageSize)=>ajax('manage/product/list',{
+  params:{//包含所有query参数的对象
+    pageNum,
+    pageSize
+  }
+})

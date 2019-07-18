@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Card, Button, Icon, Table, message, Modal } from 'antd'
 import LinkButton from '../../components/LinkButton'
-import './category.less'
+
 import { repCategoyrs, repAddCategoyr, repUpdateCategoyr } from '../../api'
 import AddUpdatefrom from './add-update-from'
 
