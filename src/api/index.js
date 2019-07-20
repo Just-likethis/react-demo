@@ -4,7 +4,9 @@
 */
 import ajax from './ajax'
 import jsonp from 'jsonp'
-import { message } from 'antd';
+import {
+  message
+} from 'antd';
 // const BASE = 'http://localhost:5000'
 const BASE = ''
 
@@ -41,10 +43,16 @@ export const repweather = (city) => {
   return new Promise((resolve, reject) => { //执行器函数:内部去执行异步任务
     const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`
     jsonp(url, {}, (err, data) => {
-      if(!err&&data.error===0){
-        const {dayPictureUrl,weather}=data.results[0].weather_data[0]
-        resolve({dayPictureUrl,weather})
-      }else{
+      if (!err && data.error === 0) {
+        const {
+          dayPictureUrl,
+          weather
+        } = data.results[0].weather_data[0]
+        resolve({
+          dayPictureUrl,
+          weather
+        })
+      } else {
         message.error('获取天气信息失败')
       }
     })
@@ -58,23 +66,51 @@ export const repweather = (city) => {
 //   url: 'http://bit.ly/2mTM3nY',
 //   responseType: 'stream'
 // })
-export const repCategoyrs=()=>ajax('/manage/category/list') //返回的是promise对象
+export const repCategoyrs = () => ajax('/manage/category/list') //返回的是promise对象
 
 //添加分类
-export const repAddCategoyr=(categoryName)=>ajax.post('/manage/category/add',{
+export const repAddCategoyr = (categoryName) => ajax.post('/manage/category/add', {
   categoryName
 }) //返回的是promise对象
 //修改分类
-export const repUpdateCategoyr=({categoryName,categoryId})=>ajax.post('/manage/category/update',{
+export const repUpdateCategoyr = ({
+  categoryName,
+  categoryId
+}) => ajax.post('/manage/category/update', {
   categoryName,
   categoryId
 }) //返回的是promise对象
 
 
 //获取商品分页列表
-export const repProducts=(pageNum,pageSize)=>ajax('manage/product/list',{
-  params:{//包含所有query参数的对象
+export const repProducts = (pageNum, pageSize) => ajax('manage/product/list', {
+  params: { //包含所有query参数的对象
     pageNum,
     pageSize
+  }
+})
+
+//根据Name或者描述搜索产品分页列表
+export const reqSearchProducts = ({
+    pageNum,
+    pageSize,
+    searchName,
+    searchType
+  } //他的值是productName 或者  productDesc
+) => ajax('/manage/product/search', {
+  params: {
+    pageNum,
+    pageSize,
+    [searchType]: searchName,
+
+  }
+})
+
+// 对商品进行上架/下架处理
+export const reaUpdateStatus = (productId, status) => ajax('/manage/product/updateStatus', {
+  method: 'POST',
+  data: {
+    productId,
+    status
   }
 })

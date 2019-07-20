@@ -121,7 +121,10 @@ export default class Category extends Component {
     //取出状态数据
     const { categorys, loading, showStatus } = this.state
     const extra = (
-      <Button type='primary' onClick={() => { this.setState({ showStatus: 1 }) }}>
+      <Button type='primary' onClick={() => { 
+        this.category={}
+        this.setState({ showStatus: 1 })
+         }}>
         <Icon type="plus" />添加
       </Button>
     )
